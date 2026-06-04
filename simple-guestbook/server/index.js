@@ -51,6 +51,34 @@ app.get('/api/messages', async (req, res) => {
   }
 });
 
+app.put('/api/messages/:id', async (req, res) => {
+  try {
+    console.log("PUT request received for ID:", req.params.id);
+    console.log("Request body:", req.body);
+    
+    const updatedMessage = await Message.findByIdAndUpdate(
+      req.params.id,
+      { name: req.body.name, message: req.body.message },
+      { new: true }
+    );
+    
+    console.log("Updated message:", updatedMessage);
+    res.json(updatedMessage);
+  } catch (error) {
+    console.error("PUT error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/messages/:id', async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Message deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
